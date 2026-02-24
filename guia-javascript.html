@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia JavaScript — Ensino Técnico</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0d0f1a;
+    --surface: #13162a;
+    --card: #1a1e35;
+    --border: #2a2f52;
+    --accent: #5b7fff;
+    --accent2: #ff6b6b;
+    --accent3: #48cfad;
+    --accent4: #ffce54;
+    --text: #e2e8ff;
+    --muted: #8b92b8;
+    --code-bg: #0a0c18;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0d0f1a 0%, #1a1040 50%, #0d1a2a 100%);
+    padding: 60px 40px 50px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(91,127,255,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header .badge {
+    display: inline-block;
+    background: rgba(91,127,255,0.15);
+    border: 1px solid rgba(91,127,255,0.4);
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  header h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  header h1 span { color: var(--accent); }
+  header p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* LAYOUT */
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* NAV PILLS */
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 50px;
+    justify-content: center;
+  }
+  .nav-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  /* SECTIONS */
+  .section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+  /* MODULE CARD */
+  .module {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .module::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--accent-color, var(--accent));
+  }
+  .module-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .step-badge {
+    background: var(--accent-color, var(--accent));
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .module h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .module p {
+    color: var(--muted);
+    margin-bottom: 16px;
+    font-size: 0.98rem;
+  }
+  .module ul {
+    list-style: none;
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+  }
+  .module ul li::before { content: '→ '; color: var(--accent-color, var(--accent)); }
+  .module ul li { margin-bottom: 6px; }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 18px 0;
+    overflow: hidden;
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .run-btn {
+    background: var(--accent3);
+    color: #0a2018;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: none;
+    padding: 5px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .run-btn:hover { background: #5ef0c0; transform: scale(1.03); }
+  pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    padding: 20px;
+    color: #c9d1ff;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  /* Syntax highlighting via CSS only */
+  .kw { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .num { color: var(--accent4); }
+  .cmt { color: #546e7a; font-style: italic; }
+  .fn { color: #82aaff; }
+  .var2 { color: #f07178; }
+
+  /* OUTPUT AREA */
+  .output {
+    background: #070910;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent3);
+    min-height: 50px;
+    display: none;
+    margin-top: 10px;
+  }
+  .output.visible { display: block; }
+  .output-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  /* CONCEPT CHIPS */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .chip {
+    background: rgba(91,127,255,0.1);
+    border: 1px solid rgba(91,127,255,0.25);
+    color: var(--accent);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+
+  /* CALLOUT */
+  .callout {
+    background: rgba(255,206,84,0.07);
+    border: 1px solid rgba(255,206,84,0.25);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 0.9rem;
+    color: #f5d98a;
+  }
+  .callout strong { color: var(--accent4); }
+
+  .info-callout {
+    background: rgba(91,127,255,0.07);
+    border: 1px solid rgba(91,127,255,0.25);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 0.9rem;
+    color: #aab8ff;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    background: var(--border);
+    border-radius: 4px;
+    height: 4px;
+    margin-bottom: 40px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Material Didático</div>
+  <h1>Algoritmos em <span>JavaScript</span></h1>
+  <p>Do básico ao avançado — passo a passo para o ensino técnico médio</p>
+</header>
+
+<div class="container">
+
+  <nav class="nav" id="mainNav">
+    <button class="nav-btn active" onclick="showSection('s1', this)">1 · Variáveis</button>
+    <button class="nav-btn" onclick="showSection('s2', this)">2 · Operadores</button>
+    <button class="nav-btn" onclick="showSection('s3', this)">3 · Condicionais</button>
+    <button class="nav-btn" onclick="showSection('s4', this)">4 · Laços</button>
+    <button class="nav-btn" onclick="showSection('s5', this)">5 · Vetores</button>
+    <button class="nav-btn" onclick="showSection('s6', this)">6 · Funções</button>
+    <button class="nav-btn" onclick="showSection('s7', this)">7 · Recursividade</button>
+  </nav>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:14%"></div></div>
+
+  <!-- ========== SEÇÃO 1 — VARIÁVEIS ========== -->
+  <div class="section active" id="s1">
+    <div class="module" style="--accent-color: #5b7fff">
+      <div class="module-header">
+        <span class="step-badge" style="background:#5b7fff">Passo 01</span>
+        <h2>Variáveis e Tipos de Dados</h2>
+      </div>
+      <p>Variáveis são <strong style="color:var(--text)">caixas nomeadas na memória</strong> que guardam valores. Em JavaScript moderno usamos <code style="color:#82aaff">let</code> e <code style="color:#82aaff">const</code>. Evite <code style="color:#f07178">var</code> — ele tem escopo confuso.</p>
+
+      <ul>
+        <li><strong>const</strong> — valor que não muda (constante)</li>
+        <li><strong>let</strong> — valor que pode ser reatribuído</li>
+        <li>Tipos: <code>number</code>, <code>string</code>, <code>boolean</code>, <code>null</code>, <code>undefined</code></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="run-btn" onclick="runCode('code1', 'out1')">▶ Executar</button>
+        </div>
+        <pre id="code1"><span class="cmt">// ── Declarando variáveis ──────────────────</span>
+<span class="kw">const</span> <span class="var2">nome</span>   = <span class="str">"Maria"</span>;        <span class="cmt">// string (texto)</span>
+<span class="kw">const</span> <span class="var2">idade</span>  = <span class="num">17</span>;             <span class="cmt">// number (inteiro)</span>
+<span class="kw">const</span> <span class="var2">nota</span>   = <span class="num">9.5</span>;            <span class="cmt">// number (decimal)</span>
+<span class="kw">const</span> <span class="var2">ativo</span>  = <span class="kw">true</span>;           <span class="cmt">// boolean</span>
+
+<span class="kw">let</span> <span class="var2">contador</span> = <span class="num">0</span>;             <span class="cmt">// pode mudar depois</span>
+<span class="var2">contador</span> = <span class="num">1</span>;                <span class="cmt">// reatribuição OK</span>
+
+<span class="cmt">// ── Exibindo valores ──────────────────────</span>
+<span class="fn">console</span>.log(<span class="str">"Nome:"</span>, <span class="var2">nome</span>);
+<span class="fn">console</span>.log(<span class="str">"Idade:"</span>, <span class="var2">idade</span>);
+<span class="fn">console</span>.log(<span class="str">"Nota:"</span>, <span class="var2">nota</span>);
+<span class="fn">console</span>.log(<span class="str">"Ativo?"</span>, <span class="var2">ativo</span>);
+<span class="fn">console</span>.log(<span class="str">"Tipo de nome:"</span>, <span class="kw">typeof</span> <span class="var2">nome</span>);
+<span class="fn">console</span>.log(<span class="str">"Tipo de nota:"</span>, <span class="kw">typeof</span> <span class="var2">nota</span>);</pre>
+      </div>
+      <div class="output" id="out1"><div class="output-label">Saída</div><div class="output-content"></div></div>
+
+      <div class="callout"><strong>⚠ Atenção:</strong> JavaScript não exige declarar o tipo. O tipo é inferido pelo valor. Isso é chamado de <em>tipagem dinâmica</em>.</div>
+
+      <div class="chips">
+        <span class="chip">const</span><span class="chip">let</span><span class="chip">typeof</span>
+        <span class="chip">string</span><span class="chip">number</span><span class="chip">boolean</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SEÇÃO 2 — OPERADORES ========== -->
+  <div class="section" id="s2">
+    <div class="module" style="--accent-color: #ff6b6b">
+      <div class="module-header">
+        <span class="step-badge" style="background:#ff6b6b">Passo 02</span>
+        <h2>Operadores</h2>
+      </div>
+      <p>Operadores realizam cálculos, comparações e operações lógicas entre valores.</p>
+      <ul>
+        <li><strong>Aritméticos:</strong> +  −  *  /  %  **</li>
+        <li><strong>Comparação:</strong> ===  !==  &gt;  &lt;  &gt;=  &lt;=</li>
+        <li><strong>Lógicos:</strong> &&  ||  !</li>
+        <li><strong>Atribuição:</strong> =  +=  -=  *=</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="run-btn" onclick="runCode('code2', 'out2')">▶ Executar</button>
+        </div>
+        <pre id="code2"><span class="kw">const</span> <span class="var2">a</span> = <span class="num">10</span>, <span class="var2">b</span> = <span class="num">3</span>;
+
+<span class="cmt">// ── Aritméticos ───────────────────────────</span>
+<span class="fn">console</span>.log(<span class="str">"Soma:"</span>,    <span class="var2">a</span> + <span class="var2">b</span>);   <span class="cmt">// 13</span>
+<span class="fn">console</span>.log(<span class="str">"Subtração:"</span>, <span class="var2">a</span> - <span class="var2">b</span>); <span class="cmt">// 7</span>
+<span class="fn">console</span>.log(<span class="str">"Divisão:"</span>,  <span class="var2">a</span> / <span class="var2">b</span>);  <span class="cmt">// 3.333...</span>
+<span class="fn">console</span>.log(<span class="str">"Resto:"</span>,    <span class="var2">a</span> % <span class="var2">b</span>);  <span class="cmt">// 1</span>
+<span class="fn">console</span>.log(<span class="str">"Potência:"</span>, <span class="var2">a</span> ** <span class="var2">b</span>); <span class="cmt">// 1000</span>
+
+<span class="cmt">// ── Comparação (sempre use ===) ───────────</span>
+<span class="fn">console</span>.log(<span class="str">"a === 10?"</span>, <span class="var2">a</span> === <span class="num">10</span>); <span class="cmt">// true</span>
+<span class="fn">console</span>.log(<span class="str">"a > b?"</span>,   <span class="var2">a</span> &gt; <span class="var2">b</span>);   <span class="cmt">// true</span>
+
+<span class="cmt">// ── Lógicos ───────────────────────────────</span>
+<span class="kw">const</span> <span class="var2">aprovado</span> = <span class="var2">a</span> &gt; <span class="num">5</span> && <span class="var2">b</span> &lt; <span class="num">10</span>;
+<span class="fn">console</span>.log(<span class="str">"Aprovado?"</span>, <span class="var2">aprovado</span>);  <span class="cmt">// true</span>
+
+<span class="cmt">// ── Template string (interpolação) ───────</span>
+<span class="fn">console</span>.log(<span class="str">`${<span class="var2">a</span>} dividido por ${<span class="var2">b</span>} = ${(<span class="var2">a</span>/<span class="var2">b</span>).toFixed(2)}`</span>);</pre>
+      </div>
+      <div class="output" id="out2"><div class="output-label">Saída</div><div class="output-content"></div></div>
+
+      <div class="info-callout">Use sempre <code>===</code> (igualdade estrita) em vez de <code>==</code>, para evitar conversões de tipo inesperadas.</div>
+    </div>
+  </div>
+
+  <!-- ========== SEÇÃO 3 — CONDICIONAIS ========== -->
+  <div class="section" id="s3">
+    <div class="module" style="--accent-color: #ffce54">
+      <div class="module-header">
+        <span class="step-badge" style="background:#ffce54; color:#1a1200">Passo 03</span>
+        <h2>Estruturas Condicionais</h2>
+      </div>
+      <p>Permitem que o programa tome <strong style="color:var(--text)">decisões</strong> com base em condições verdadeiras ou falsas.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="run-btn" onclick="runCode('code3', 'out3')">▶ Executar</button>
+        </div>
+        <pre id="code3"><span class="cmt">// ── if / else if / else ───────────────────</span>
+<span class="kw">const</span> <span class="var2">media</span> = <span class="num">6.8</span>;
+
+<span class="kw">if</span> (<span class="var2">media</span> &gt;= <span class="num">7</span>) {
+  <span class="fn">console</span>.log(<span class="str">"✅ Aprovado"</span>);
+} <span class="kw">else if</span> (<span class="var2">media</span> &gt;= <span class="num">5</span>) {
+  <span class="fn">console</span>.log(<span class="str">"⚠️ Recuperação"</span>);
+} <span class="kw">else</span> {
+  <span class="fn">console</span>.log(<span class="str">"❌ Reprovado"</span>);
+}
+
+<span class="cmt">// ── Operador ternário (forma curta) ───────</span>
+<span class="kw">const</span> <span class="var2">status</span> = <span class="var2">media</span> &gt;= <span class="num">7</span> ? <span class="str">"Aprovado"</span> : <span class="str">"Reprovado"</span>;
+<span class="fn">console</span>.log(<span class="str">"Status:"</span>, <span class="var2">status</span>);
+
+<span class="cmt">// ── switch (múltiplos casos fixos) ────────</span>
+<span class="kw">const</span> <span class="var2">dia</span> = <span class="num">2</span>;
+<span class="kw">switch</span> (<span class="var2">dia</span>) {
+  <span class="kw">case</span> <span class="num">1</span>: <span class="fn">console</span>.log(<span class="str">"Segunda-feira"</span>); <span class="kw">break</span>;
+  <span class="kw">case</span> <span class="num">2</span>: <span class="fn">console</span>.log(<span class="str">"Terça-feira"</span>);   <span class="kw">break</span>;
+  <span class="kw">case</span> <span class="num">3</span>: <span class="fn">console</span>.log(<span class="str">"Quarta-feira"</span>);  <span class="kw">break</span>;
+  <span class="kw">default</span>: <span class="fn">console</span>.log(<span class="str">"Outro dia"</span>);
+}</pre>
+      </div>
+      <div class="output" id="out3"><div class="output-label">Saída</div><div class="output-content"></div></div>
+    </div>
+  </div>
+
+  <!-- ========== SEÇÃO 4 — LAÇOS ========== -->
+  <div class="section" id="s4">
+    <div class="module" style="--accent-color: #48cfad">
+      <div class="module-header">
+        <span class="step-badge" style="background:#48cfad; color:#001a12">Passo 04</span>
+        <h2>Laços de Repetição</h2>
+      </div>
+      <p>Laços executam um bloco de código várias vezes, evitando repetição manual.</p>
+      <ul>
+        <li><strong>for</strong> — quando sabe o número de repetições</li>
+        <li><strong>while</strong> — enquanto uma condição for verdadeira</li>
+        <li><strong>do...while</strong> — executa pelo menos uma vez</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="run-btn" onclick="runCode('code4', 'out4')">▶ Executar</button>
+        </div>
+        <pre id="code4"><span class="cmt">// ── for clássico ─────────────────────────</span>
+<span class="fn">console</span>.log(<span class="str">"=== Tabuada do 7 ==="</span>);
+<span class="kw">for</span> (<span class="kw">let</span> <span class="var2">i</span> = <span class="num">1</span>; <span class="var2">i</span> &lt;= <span class="num">5</span>; <span class="var2">i</span>++) {
+  <span class="fn">console</span>.log(<span class="str">`7 × ${<span class="var2">i</span>} = ${<span class="num">7</span> * <span class="var2">i</span>}`</span>);
+}
+
+<span class="cmt">// ── while ─────────────────────────────────</span>
+<span class="fn">console</span>.log(<span class="str">"=== Contagem regressiva ==="</span>);
+<span class="kw">let</span> <span class="var2">n</span> = <span class="num">5</span>;
+<span class="kw">while</span> (<span class="var2">n</span> &gt; <span class="num">0</span>) {
+  <span class="fn">console</span>.log(<span class="var2">n</span>);
+  <span class="var2">n</span>--;
+}
+<span class="fn">console</span>.log(<span class="str">"🚀 Lançamento!"</span>);
+
+<span class="cmt">// ── Soma com for ──────────────────────────</span>
+<span class="kw">let</span> <span class="var2">soma</span> = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">let</span> <span class="var2">k</span> = <span class="num">1</span>; <span class="var2">k</span> &lt;= <span class="num">10</span>; <span class="var2">k</span>++) <span class="var2">soma</span> += <span class="var2">k</span>;
+<span class="fn">console</span>.log(<span class="str">"Soma 1 a 10:"</span>, <span class="var2">soma</span>);</pre>
+      </div>
+      <div class="output" id="out4"><div class="output-label">Saída</div><div class="output-content"></div></div>
+    </div>
+  </div>
+
+  <!-- ========== SEÇÃO 5 — VETORES ========== -->
+  <div class="section" id="s5">
+    <div class="module" style="--accent-color: #a78bfa">
+      <div class="module-header">
+        <span class="step-badge" style="background:#a78bfa; color:#1a0a2a">Passo 05</span>
+        <h2>Vetores (Arrays)</h2>
+      </div>
+      <p>Vetores armazenam <strong style="color:var(--text)">múltiplos valores em sequência</strong>. O índice começa em <code>0</code>.</p>
+      <ul>
+        <li>Declaração: <code>const v = [1, 2, 3]</code></li>
+        <li>Acesso: <code>v[0]</code>, <code>v[1]</code>...</li>
+        <li>Métodos: <code>push</code>, <code>pop</code>, <code>length</code>, <code>forEach</code>, <code>map</code>, <code>filter</code></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="run-btn" onclick="runCode('code5', 'out5')">▶ Executar</button>
+        </div>
+        <pre id="code5"><span class="cmt">// ── Criando e acessando ───────────────────</span>
+<span class="kw">const</span> <span class="var2">notas</span> = [<span class="num">8.5</span>, <span class="num">7.0</span>, <span class="num">9.2</span>, <span class="num">6.8</span>, <span class="num">8.0</span>];
+<span class="fn">console</span>.log(<span class="str">"Primeira nota:"</span>, <span class="var2">notas</span>[<span class="num">0</span>]);
+<span class="fn">console</span>.log(<span class="str">"Qtd de notas:"</span>,  <span class="var2">notas</span>.length);
+
+<span class="cmt">// ── Percorrendo com for ───────────────────</span>
+<span class="fn">console</span>.log(<span class="str">"=== Todas as notas ==="</span>);
+<span class="kw">for</span> (<span class="kw">let</span> <span class="var2">i</span> = <span class="num">0</span>; <span class="var2">i</span> &lt; <span class="var2">notas</span>.length; <span class="var2">i</span>++) {
+  <span class="fn">console</span>.log(<span class="str">`Aluno ${<span class="var2">i</span>+<span class="num">1</span>}: ${<span class="var2">notas</span>[<span class="var2">i</span>]}`</span>);
+}
+
+<span class="cmt">// ── Calculando a média ────────────────────</span>
+<span class="kw">let</span> <span class="var2">total</span> = <span class="num">0</span>;
+<span class="var2">notas</span>.forEach(<span class="var2">n</span> =&gt; <span class="var2">total</span> += <span class="var2">n</span>);
+<span class="kw">const</span> <span class="var2">media</span> = <span class="var2">total</span> / <span class="var2">notas</span>.length;
+<span class="fn">console</span>.log(<span class="str">"Média da turma:"</span>, <span class="var2">media</span>.toFixed(2));
+
+<span class="cmt">// ── Filtrando aprovados ───────────────────</span>
+<span class="kw">const</span> <span class="var2">aprovados</span> = <span class="var2">notas</span>.filter(<span class="var2">n</span> =&gt; <span class="var2">n</span> &gt;= <span class="num">7</span>);
+<span class="fn">console</span>.log(<span class="str">"Notas aprovadas:"</span>, <span class="var2">aprovados</span>);</pre>
+      </div>
+      <div class="output" id="out5"><div class="output-label">Saída</div><div class="output-content"></div></div>
+
+      <div class="callout"><strong>Dica didática:</strong> Visualize o vetor como uma fila numerada, onde cada posição (índice) começa do zero.</div>
+    </div>
+  </div>
+
+  <!-- ========== SEÇÃO 6 — FUNÇÕES ========== -->
+  <div class="section" id="s6">
+    <div class="module" style="--accent-color: #ff6b6b">
+      <div class="module-header">
+        <span class="step-badge" style="background:#ff6b6b">Passo 06</span>
+        <h2>Funções</h2>
+      </div>
+      <p>Funções são <strong style="color:var(--text)">blocos de código reutilizáveis</strong> que recebem parâmetros e retornam resultados. São o coração da programação modular.</p>
+      <ul>
+        <li>Declaração clássica: <code>function nome(params) {'{}'}</code></li>
+        <li>Arrow function: <code>const nome = (params) =&gt; {'{}'}</code></li>
+        <li>Parâmetros com valor padrão</li>
+        <li>Retorno com <code>return</code></li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="run-btn" onclick="runCode('code6', 'out6')">▶ Executar</button>
+        </div>
+        <pre id="code6"><span class="cmt">// ── Função clássica ───────────────────────</span>
+<span class="kw">function</span> <span class="fn">saudar</span>(<span class="var2">nome</span>) {
+  <span class="kw">return</span> <span class="str">`Olá, ${<span class="var2">nome</span>}! Bem-vindo ao curso.`</span>;
+}
+<span class="fn">console</span>.log(<span class="fn">saudar</span>(<span class="str">"Carlos"</span>));
+
+<span class="cmt">// ── Função com múltiplos parâmetros ───────</span>
+<span class="kw">function</span> <span class="fn">calcularMedia</span>(...<span class="var2">notas</span>) {
+  <span class="kw">const</span> <span class="var2">soma</span> = <span class="var2">notas</span>.reduce((<span class="var2">acc</span>, <span class="var2">n</span>) =&gt; <span class="var2">acc</span> + <span class="var2">n</span>, <span class="num">0</span>);
+  <span class="kw">return</span> (<span class="var2">soma</span> / <span class="var2">notas</span>.length).toFixed(2);
+}
+<span class="fn">console</span>.log(<span class="str">"Média:"</span>, <span class="fn">calcularMedia</span>(<span class="num">8</span>, <span class="num">7</span>, <span class="num">9</span>, <span class="num">6.5</span>));
+
+<span class="cmt">// ── Arrow function ────────────────────────</span>
+<span class="kw">const</span> <span class="fn">dobro</span> = <span class="var2">x</span> =&gt; <span class="var2">x</span> * <span class="num">2</span>;
+<span class="fn">console</span>.log(<span class="str">"Dobro de 7:"</span>, <span class="fn">dobro</span>(<span class="num">7</span>));
+
+<span class="cmt">// ── Parâmetro padrão ──────────────────────</span>
+<span class="kw">function</span> <span class="fn">potencia</span>(<span class="var2">base</span>, <span class="var2">exp</span> = <span class="num">2</span>) {
+  <span class="kw">return</span> <span class="var2">base</span> ** <span class="var2">exp</span>;
+}
+<span class="fn">console</span>.log(<span class="fn">potencia</span>(<span class="num">4</span>));       <span class="cmt">// 16 (exp=2 padrão)</span>
+<span class="fn">console</span>.log(<span class="fn">potencia</span>(<span class="num">2</span>, <span class="num">10</span>));   <span class="cmt">// 1024</span>
+
+<span class="cmt">// ── Função que retorna vetor ───────────────</span>
+<span class="kw">function</span> <span class="fn">filtrarAprovados</span>(<span class="var2">alunos</span>) {
+  <span class="kw">return</span> <span class="var2">alunos</span>.filter(<span class="var2">a</span> =&gt; <span class="var2">a</span>.nota &gt;= <span class="num">7</span>);
+}
+<span class="kw">const</span> <span class="var2">turma</span> = [
+  { <span class="var2">nome</span>: <span class="str">"Ana"</span>, <span class="var2">nota</span>: <span class="num">8.5</span> },
+  { <span class="var2">nome</span>: <span class="str">"Bob"</span>, <span class="var2">nota</span>: <span class="num">5.0</span> },
+  { <span class="var2">nome</span>: <span class="str">"Cia"</span>, <span class="var2">nota</span>: <span class="num">9.0</span> },
+];
+<span class="kw">const</span> <span class="var2">ok</span> = <span class="fn">filtrarAprovados</span>(<span class="var2">turma</span>);
+<span class="var2">ok</span>.forEach(<span class="var2">a</span> =&gt; <span class="fn">console</span>.log(<span class="str">`✅ ${<span class="var2">a</span>.nome}: ${<span class="var2">a</span>.nota}`</span>));</pre>
+      </div>
+      <div class="output" id="out6"><div class="output-label">Saída</div><div class="output-content"></div></div>
+    </div>
+  </div>
+
+  <!-- ========== SEÇÃO 7 — RECURSIVIDADE ========== -->
+  <div class="section" id="s7">
+    <div class="module" style="--accent-color: #48cfad">
+      <div class="module-header">
+        <span class="step-badge" style="background:#48cfad; color:#001a12">Passo 07</span>
+        <h2>Recursividade</h2>
+      </div>
+      <p>Uma função recursiva é aquela que <strong style="color:var(--text)">chama a si mesma</strong>. Toda recursão precisa de um <strong style="color:#48cfad">caso base</strong> (condição de parada) para não entrar em loop infinito.</p>
+
+      <div class="info-callout">
+        <strong>Estrutura mínima:</strong><br>
+        1) Caso base → retorna sem chamar a si mesma<br>
+        2) Caso recursivo → resolve parte do problema e chama a si mesma
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">JavaScript</span>
+          <button class="run-btn" onclick="runCode('code7', 'out7')">▶ Executar</button>
+        </div>
+        <pre id="code7"><span class="cmt">// ── 1) Fatorial ───────────────────────────</span>
+<span class="cmt">// fat(5) = 5 × fat(4) = 5 × 4 × 3 × 2 × 1 = 120</span>
+<span class="kw">function</span> <span class="fn">fatorial</span>(<span class="var2">n</span>) {
+  <span class="kw">if</span> (<span class="var2">n</span> &lt;= <span class="num">1</span>) <span class="kw">return</span> <span class="num">1</span>;          <span class="cmt">// caso base</span>
+  <span class="kw">return</span> <span class="var2">n</span> * <span class="fn">fatorial</span>(<span class="var2">n</span> - <span class="num">1</span>);    <span class="cmt">// caso recursivo</span>
+}
+<span class="fn">console</span>.log(<span class="str">"5! ="</span>, <span class="fn">fatorial</span>(<span class="num">5</span>));    <span class="cmt">// 120</span>
+<span class="fn">console</span>.log(<span class="str">"7! ="</span>, <span class="fn">fatorial</span>(<span class="num">7</span>));    <span class="cmt">// 5040</span>
+
+<span class="cmt">// ── 2) Fibonacci ──────────────────────────</span>
+<span class="cmt">// fib(n) = fib(n-1) + fib(n-2)</span>
+<span class="kw">function</span> <span class="fn">fibonacci</span>(<span class="var2">n</span>) {
+  <span class="kw">if</span> (<span class="var2">n</span> &lt;= <span class="num">1</span>) <span class="kw">return</span> <span class="var2">n</span>;            <span class="cmt">// caso base</span>
+  <span class="kw">return</span> <span class="fn">fibonacci</span>(<span class="var2">n</span>-<span class="num">1</span>) + <span class="fn">fibonacci</span>(<span class="var2">n</span>-<span class="num">2</span>);
+}
+<span class="fn">console</span>.log(<span class="str">"Fibonacci(8):"</span>, <span class="fn">fibonacci</span>(<span class="num">8</span>));  <span class="cmt">// 21</span>
+
+<span class="cmt">// ── 3) Soma de array com recursão ─────────</span>
+<span class="kw">function</span> <span class="fn">somaArray</span>(<span class="var2">arr</span>, <span class="var2">i</span> = <span class="num">0</span>) {
+  <span class="kw">if</span> (<span class="var2">i</span> === <span class="var2">arr</span>.length) <span class="kw">return</span> <span class="num">0</span>;  <span class="cmt">// caso base</span>
+  <span class="kw">return</span> <span class="var2">arr</span>[<span class="var2">i</span>] + <span class="fn">somaArray</span>(<span class="var2">arr</span>, <span class="var2">i</span> + <span class="num">1</span>);
+}
+<span class="fn">console</span>.log(<span class="str">"Soma [1..5]:"</span>, <span class="fn">somaArray</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>])); <span class="cmt">// 15</span>
+
+<span class="cmt">// ── 4) Contagem regressiva recursiva ──────</span>
+<span class="kw">function</span> <span class="fn">contagem</span>(<span class="var2">n</span>) {
+  <span class="kw">if</span> (<span class="var2">n</span> === <span class="num">0</span>) { <span class="fn">console</span>.log(<span class="str">"🚀"</span>); <span class="kw">return</span>; }
+  <span class="fn">console</span>.log(<span class="var2">n</span> + <span class="str">"..."</span>);
+  <span class="fn">contagem</span>(<span class="var2">n</span> - <span class="num">1</span>);
+}
+<span class="fn">contagem</span>(<span class="num">4</span>);</pre>
+      </div>
+      <div class="output" id="out7"><div class="output-label">Saída</div><div class="output-content"></div></div>
+
+      <div class="callout"><strong>⚠ Atenção:</strong> Sempre defina o caso base primeiro. Sem ele, a função chamará a si mesma infinitamente até causar um "stack overflow" (estouro de pilha).</div>
+
+      <div class="chips">
+        <span class="chip">caso base</span><span class="chip">caso recursivo</span>
+        <span class="chip">fatorial</span><span class="chip">fibonacci</span><span class="chip">call stack</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Material para Ensino Técnico de Nível Médio · JavaScript Algoritmos · Adaptado para sala de aula
+</footer>
+
+<script>
+  // NAVEGAÇÃO
+  const sections = ['s1','s2','s3','s4','s5','s6','s7'];
+  const progresses = [14,28,42,57,71,85,100];
+
+  function showSection(id, btn) {
+    sections.forEach(s => document.getElementById(s).classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const idx = sections.indexOf(id);
+    document.getElementById('progressFill').style.width = progresses[idx] + '%';
+    window.scrollTo({top: 0, behavior:'smooth'});
+  }
+
+  // EXECUTAR CÓDIGO
+  function runCode(codeId, outId) {
+    const codeEl = document.getElementById(codeId);
+    // Extract plain text from the highlighted HTML
+    const rawCode = codeEl.innerText || codeEl.textContent;
+    const outEl = document.getElementById(outId);
+    const contentEl = outEl.querySelector('.output-content');
+
+    const logs = [];
+    const orig = console.log;
+    console.log = (...args) => {
+      logs.push(args.map(a => {
+        if (typeof a === 'object') return JSON.stringify(a);
+        return String(a);
+      }).join(' '));
+    };
+
+    try {
+      eval(rawCode);
+    } catch(e) {
+      logs.push('❌ Erro: ' + e.message);
+    }
+
+    console.log = orig;
+    outEl.classList.add('visible');
+    contentEl.innerHTML = logs.join('<br>');
+  }
+</script>
+</body>
+</html>
